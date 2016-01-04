@@ -1,4 +1,5 @@
 /*global define*/
+/*jshint camelcase:false*/
 define('ext.wikia.adEngine.lookup.openXBidder', [
 	'ext.wikia.adEngine.adContext',
 	'ext.wikia.adEngine.lookup.lookupFactory',
