@@ -69,11 +69,7 @@ define('ext.wikia.adEngine.lookup.amazonMatch', [
 				size = m[1];
 				tier = parseInt(m[2], 10);
 
-				if (!priceMap[size]) {
-					priceMap[size] = tier;
-				}
-
-				if (tier < priceMap[size]) {
+				if (!priceMap[size] || tier < priceMap[size]) {
 					priceMap[size] = tier;
 				}
 			}
