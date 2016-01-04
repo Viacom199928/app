@@ -1,10 +1,10 @@
 <?php
 
-use Wikia\Service\Gateway\ConsulUrlProvider;
-use Wikia\Service\Swagger\ApiProvider;
 use Swagger\Client\TemplateClassification\Storage\Api\TCSApi;
-use Swagger\Client\TemplateClassification\Storage\Models\TemplateTypeProvider;
 use Swagger\Client\TemplateClassification\Storage\Models\TemplateTypeHolder;
+use Swagger\Client\TemplateClassification\Storage\Models\TemplateTypeProvider;
+use Wikia\DependencyInjection\Injector;
+use Wikia\Service\Swagger\ApiProvider;
 
 class TemplateClassificationService {
 
@@ -23,7 +23,6 @@ class TemplateClassificationService {
 	const TEMPLATE_NOT_ART = 'nonarticle';
 	const TEMPLATE_OTHER = 'other';
 	const TEMPLATE_QUOTE = 'quote';
-	const LEGACY_TEMPLATE_REFERENCES = 'reference'; // TODO remove DAT-3568
 	const TEMPLATE_REFERENCES = 'references';
 	const TEMPLATE_SCROLLBOX = 'scrollbox';
 	const TEMPLATE_DIRECTLY_USED = 'directlyused';
@@ -50,21 +49,10 @@ class TemplateClassificationService {
 
 		$type = $this->getApiClient()->getTemplateType( $wikiId, $pageId );
 		if ( !is_null( $type ) ) {
-			$templateType = $this->fallbackLegacy( $type->getType() );
+			$templateType = $type->getType();
 		}
 
 		return $templateType;
-	}
-
-	/**
-	 * 'reference' was changed to 'references' to be aligned with auto classification
-	 * TODO remove once strings are updated in service DAT-3568
-	 */
-	private function fallbackLegacy( $type ) {
-		if ( $type === self::LEGACY_TEMPLATE_REFERENCES ) {
-			return self::TEMPLATE_REFERENCES;
-		}
-		return $type;
 	}
 
 	/**
@@ -183,9 +171,8 @@ class TemplateClassificationService {
 	 * @return TCSApi
 	 */
 	private function createApiClient() {
-		global $wgConsulUrl, $wgConsulServiceTag;
-		$urlProvider = new ConsulUrlProvider( $wgConsulUrl, $wgConsulServiceTag );
-		$apiProvider = new ApiProvider( $urlProvider );
+		/** @var ApiProvider $apiProvider */
+		$apiProvider = Injector::getInjector()->get(ApiProvider::class);
 		$api = $apiProvider->getApi( self::SERVICE_NAME, TCSApi::class );
 
 		// default CURLOPT_TIMEOUT for API client is set to 0 which means no timeout.
