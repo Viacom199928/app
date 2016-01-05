@@ -21,6 +21,8 @@ $wgAvailableRights[] = 'unblockable';
 $wgGroupPermissions['staff']['unblockable'] = true;
 $wgGroupPermissions['helper']['unblockable'] = true;
 $wgGroupPermissions['vstf']['unblockable'] = true;
+$wgGroupPermissions['sysop']['unblockable'] = true;
+$wgGroupPermissions['bureaucrat']['unblockable'] = true;
 
 /**
  * @param Block $block
